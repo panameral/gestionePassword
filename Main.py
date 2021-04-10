@@ -1,35 +1,14 @@
-from GestisciPassword import GestisciPassword
-from os.path import isfile
-import Chiave
-from sys import exit
-from os import system
+from GestisciPassword import GestisciPassword, generaPassword
+from Funzioni import esci_con_messaggio, menu, pulisci_schermo
 
-if isfile("./key"):
-    key = Chiave.apri_chiave()
-else:
-    Chiave.genera_chiave()
-    key = Chiave.apri_chiave()
+gestisci = GestisciPassword()
+passwords = gestisci.carica()
+pulisci_schermo()
 
-gestisci = GestisciPassword(key)
-passwords = ''
-scelta = ''
+while True:
+    menu()    
+    scelta = input()
 
-if isfile("./password"):
-    passwords = gestisci.listaPasswords()
-else:
-    passwords = gestisci.crea()
-
-while scelta != "7":
-    print("\n*************************")
-    print("1. Lista Piattaforme")
-    print("2. Leggi User o Password")
-    print("3. Modifica Password")
-    print("4. Aggiungi Password")
-    print("5. Elimina Password")
-    print("6. Generare una Password")
-    print("7. Esci")
-    scelta = input().lower()
-    system("clear")
     if scelta == "1":
         gestisci.listaPiattaforme(passwords)
     elif scelta == "2":
@@ -41,8 +20,9 @@ while scelta != "7":
     elif scelta == "5":
         gestisci.elimina(passwords)
     elif scelta == "6":
-        gestisci.generaPassword()
+        generaPassword()
     elif scelta == "7":
-        exit("» Grazie per aver utilizzato il programma!")
+        gestisci.salva(passwords)
+        esci_con_messaggio("» Grazie per aver utilizzato il programma!")    
     else:
         print("Le opzioni sono i numeri da 1 a 7!")
