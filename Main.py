@@ -20,7 +20,7 @@ while True:
     elif scelta == "5":
         gestisci.elimina(passwords)
     elif scelta == "6":
-        generaPassword()
+        print(generaPassword())
     elif scelta == "7":
         gestisci.salva(passwords)
         esci_con_messaggio("» Grazie per aver utilizzato il programma!")    
