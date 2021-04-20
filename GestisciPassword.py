@@ -129,4 +129,5 @@ class GestisciPassword:
             return passwords
     
     def salva(self, passwords):
+        pulisci_schermo()
         self.crypto.critta(passwords)
