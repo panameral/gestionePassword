@@ -1,12 +1,13 @@
 from GestisciPassword import GestisciPassword, generaPassword
 from Funzioni import esci_con_messaggio, menu, pulisci_schermo
 
-gestisci = GestisciPassword()
+passphrase = input("Inserisci password")
+gestisci = GestisciPassword(passphrase)
 passwords = gestisci.carica()
 pulisci_schermo()
 
 while True:
-    menu()    
+    menu()
     scelta = input()
 
     if scelta == "1":

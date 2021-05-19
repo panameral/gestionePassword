@@ -1,29 +1,34 @@
 from Funzioni import pulisci_schermo
 from Crittografia import Crittografia, genera_chiave_fernet
 from os.path import isfile
-from string import ascii_letters, digits, punctuation
+from string import ascii_letters, digits
 from random import choice
 
-
 def generaPassword():
-    caratteri = ascii_letters + digits          #Insieme di tutte le lettere e tutti i numeri (alfabeto inglese)
-    simboli = caratteri + punctuation           #Qui oltre alle lettere e ai numeri di prima, si aggiungono una serie di simboli da poter scegliere per 
-                                                    #la generazione casuale della password
-
     scelta = input("1. Password alfanumerica\n2. Password alfanumerica con simboli\nInserire scelta: ")
     numero = input("Inserire numero caratteri: ")
     
     p = ''
     if scelta == "1":             
         for i in range(int(numero)+1):
-            p += choice(caratteri)
+            l = choice(range(2))
+            if l == 0:
+                p += choice(ascii_letters)
+            elif l == 1:
+                p += choice(digits)
     elif scelta == "2":      
         for i in range(int(numero)+1):
-            p += choice(simboli)
+            l = choice(range(3))
+            if l == 0:
+                p += choice(ascii_letters)
+            elif l == 1:
+                p += choice(digits)
+            elif l == 2:
+                p += choice("@#$!%*?&_")
     
     return p
 
-def carica_chiave():
+"""def carica_chiave():
     if isfile("./key"):                 #Se il file della chiave esiste, lo apre semplicemente e lo ritorna come istanza, altrimenti prima genera il file e
         try:                            #poi lo ritorna comunque come istanza
             with open('key', 'rb') as fileK:
@@ -44,11 +49,11 @@ def carica_chiave():
             with open('key', 'rb') as fileK:
                 return fileK.read()
         except:
-            exit("» C'è stato qualche problema con la lettura della chiave")
+            exit("» C'è stato qualche problema con la lettura della chiave")"""
         
 class GestisciPassword:
-    def __init__(self):
-        self.crypto = Crittografia(carica_chiave())
+    def __init__(self, passphrase):
+        self.crypto = Crittografia(genera_chiave_fernet(passphrase))
 
     def listaPiattaforme(self, passwords):
         print("Le piattaforme sono:")

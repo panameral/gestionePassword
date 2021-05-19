@@ -1,9 +1,17 @@
-from cryptography.fernet import Fernet
-from sys import exit
-from os.path import isfile
 
-def genera_chiave_fernet():
-    return Fernet.generate_key()
+from base64 import urlsafe_b64encode
+from sys import exit
+
+from cryptography.fernet import Fernet
+
+
+def genera_chiave_fernet(passphrase):
+    char = 'GK5n4SbqDOzB160q2pm3X5lRu5L1cAzy'
+
+    for count in range(len(char) - len(passphrase)):
+        passphrase += char[count]
+
+    return urlsafe_b64encode(passphrase.encode())
 
 class Crittografia:
     def __init__(self, key):
