@@ -27,29 +27,6 @@ def generaPassword():
                 p += choice("@#$!%*?&_")
     
     return p
-
-"""def carica_chiave():
-    if isfile("./key"):                 #Se il file della chiave esiste, lo apre semplicemente e lo ritorna come istanza, altrimenti prima genera il file e
-        try:                            #poi lo ritorna comunque come istanza
-            with open('key', 'rb') as fileK:
-                return fileK.read()
-        except:
-            exit("» C'è stato qualche problema con la lettura della chiave")
-    else:       
-        #Generazione del file della chiave
-        try:
-            with open('key', 'wb') as fileK:
-                chiave_fernet = genera_chiave_fernet()
-                fileK.write(chiave_fernet)
-        except:
-            exit("» C'è stato qualche problema con la generazione della chiave")
-                
-        #Apertura del file della chiave
-        try:
-            with open('key', 'rb') as fileK:
-                return fileK.read()
-        except:
-            exit("» C'è stato qualche problema con la lettura della chiave")"""
         
 class GestisciPassword:
     def __init__(self, passphrase):
