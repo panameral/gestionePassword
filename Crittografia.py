@@ -1,21 +1,27 @@
 
 from base64 import urlsafe_b64encode
-from sys import exit
-
+from Funzioni import regola, esci_con_messaggio
 from cryptography.fernet import Fernet
 
 
 def genera_chiave_fernet(passphrase):
     char = 'GK5n4SbqDOzB160q2pm3X5lRu5L1cAzy'
 
-    for count in range(len(char) - len(passphrase)):
-        passphrase += char[count]
+    if len(passphrase) < 32:
+        for count in range(len(char) - len(passphrase)):
+            passphrase += char[count]
+    elif len(passphrase) > 32:
+        temp = passphrase
+        passphrase = temp[:32]
 
     return urlsafe_b64encode(passphrase.encode())
 
 class Crittografia:
-    def __init__(self, key):
+    file_name = "./passwords"
+
+    def __init__(self, key, fileName):
         self.key = Fernet(key)
+        self.file_name = fileName
 
     def critta(self, passwords):
         lista_temp = []
@@ -24,36 +30,68 @@ class Crittografia:
             for up in passwords[plat]:
                 lista_temp.append(up)
 
-        mj = " ".join(lista_temp)
+        mj = "\n".join(lista_temp)
         mc = self.key.encrypt(mj.encode())      #cripta il "messaggio" contenente piattaforme, user e password usando la libreria Fernet
-        try:
-            with open('password', 'wb') as fw:      #trascrive il "messaggio" criptato
-                fw.write(mc)
-        except:
-            exit("» C'è stato qualche problema con la scrittura del file delle password!")
+
+        with open(self.file_name, 'wb') as fw:      #trascrive il "messaggio" criptato
+            fw.write(mc)
 
     def decritta(self):
         mc = ''
         mf = ''
         list_temp = []
+        pt = []
         up = ['', '']
         key = ''
+
+        keys = []
+        users = []
+        passess = []
+
         passwords = {}
 
-        try:
-            with open('password', 'rb') as fr:
-                mf = fr.read()
+        with open(self.file_name, 'rb') as fr:
+            mf = fr.read()
+        mc = self.key.decrypt(mf)
+        messaggio = mc.decode()
 
-            mc = self.key.decrypt(mf)
-            messaggio = mc.decode()
-            list_temp = messaggio.split(" ")         #Usando la libreria Fernet, trasforma il messaggio criptato preso dal file 'password' e lo trasforma in una lista
+        list_temp = messaggio.split("\n")         #Usando la libreria Fernet, trasforma il messaggio criptato preso dal file 'password' e lo trasforma in una lista
 
-            for i in range(0, len(list_temp), 3):    #Trasforma la lista di prima in un dizionario su cui poter lavorare in modo più efficiente
-                key = list_temp[i]
-                up[0] = list_temp[i+1]
-                up[1] = list_temp[i+2]
-                passwords.update({key: up})
+        int_lista_size = (int(len(list_temp)/3))*3
+        list_temp = regola(list_temp, int_lista_size, len(list_temp))
 
-            return passwords
-        except:
-            exit("» C'è stato qualche problema con la lettura del file delle password!")
+        for i in range(0, len(list_temp), 3):  # Fare tre liste ordinate in modo da avere piattaforma, user e password in 3 diverrse liste su cui lavorare dopo
+            keys.append(list_temp[i].lower())
+        for i in range(1, len(list_temp), 3):
+            users.append(list_temp[i])
+        for i in range(2, len(list_temp), 3):
+            passess.append(list_temp[i])
+
+        if len(keys) != len(users) and len(keys) != len(passess):
+            print(f"Piattaforme: {len(keys)}\nUtenti: {len(users)}\nPassword: {len(passess)}")
+            esci_con_messaggio("» C'è stato qualche problema con il caricamento!")
+
+        for i in keys:
+            if keys.count(i) > 1 and i not in pt:
+                    pt.append(i)
+
+        for i in pt:
+            dp = 0
+            for j in range(len(keys)):
+                if i == keys[j]:
+                    ++dp
+                    piattaforma = keys[j]+str(dp)
+                    nome_utente = users[j]
+                    passwd = passess[j]
+                    passwords.update({piattaforma: [nome_utente, passwd]})
+
+        for i in range(len(keys)):
+            if keys[i] in pt:
+                continue
+            else:
+                piattaforma = keys[i]
+                nome_utente = users[i]
+                passwd = passess[i]
+                passwords.update({piattaforma: [nome_utente, passwd]})
+
+        return passwords

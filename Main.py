@@ -1,7 +1,10 @@
+import sys
+
 from GestisciPassword import GestisciPassword, generaPassword
 from Funzioni import esci_con_messaggio, menu, pulisci_schermo
+from getpass import getpass
 
-passphrase = input("Inserisci password")
+passphrase = getpass(prompt="Inserisci Password: ")
 gestisci = GestisciPassword(passphrase)
 passwords = gestisci.carica()
 pulisci_schermo()
@@ -23,7 +26,9 @@ while True:
     elif scelta == "6":
         print(generaPassword())
     elif scelta == "7":
+        passwords = gestisci.carica_da_file_in_chiaro()
+    elif scelta == "8":
         gestisci.salva(passwords)
         esci_con_messaggio("» Grazie per aver utilizzato il programma!")    
     else:
-        print("Le opzioni sono i numeri da 1 a 7!")
+        print("Le opzioni sono i numeri da 1 a 8")
