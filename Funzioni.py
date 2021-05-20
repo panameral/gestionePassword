@@ -49,3 +49,17 @@ def elementi_lista_non_unici(lista):
             pt.append(i)
 
     return pt
+
+def intToPlat(keys, index):
+    counter = index
+    counter_loop = 1
+    platform = ''
+
+    for i in keys:
+        if counter != counter_loop:
+            counter_loop += 1
+        else:
+            platform = i
+            break
+
+    return platform

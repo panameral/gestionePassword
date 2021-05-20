@@ -5,7 +5,7 @@ from pyperclip import copy as copia
 import cryptography
 
 from Crittografia import Crittografia, genera_chiave_fernet
-from Funzioni import pulisci_schermo, esci_con_messaggio, regola, elementi_lista_non_unici
+from Funzioni import pulisci_schermo, esci_con_messaggio, regola, elementi_lista_non_unici, intToPlat
 
 
 def generaPassword():
@@ -29,13 +29,9 @@ def generaPassword():
                 p += choice(digits)
             elif l == 2:
                 p += choice("@#$!%*?&_")
-<<<<<<< HEAD
-
     copia(p)
     print("Password generata e copiata pronta per poterla incollare!")
-=======
-    
->>>>>>> 6e50eab0ac786f02abe8786bb62747f74dcf2ace
+
     return p
         
 class GestisciPassword:
@@ -44,17 +40,25 @@ class GestisciPassword:
     def __init__(self, passphrase):
         self.crypto = Crittografia(genera_chiave_fernet(passphrase), self.file_name)
 
+
     def listaPiattaforme(self, passwords):
         print("Le piattaforme sono:")
+        counter = 0
         for platform in passwords.keys():           #Le piattaforme sono come nome delle chiavi del dizionario "passwords"
-            print(f"-> {platform}")
+            counter += 1
+            print(f"{counter} -> {platform}")
 
     def modifica(self, passwords):
-        plat = input("Quale piattaforma? ")
-        cerca = plat.lower()
+        pulisci_schermo()
+        self.listaPiattaforme(passwords)
+        plat = input("Inserisci numero relativo alla piattaforma: ")
+
+        cerca = intToPlat(passwords.keys(), int(plat))
+
         if cerca in passwords:
-            up = passwords[cerca]                                   #Essendo che la piattaforma è la chiave l'user e la password sono una lista di due elementi 
-            scelta = input("User (u) o Password (p)? ").lower()         #impostati come valore del dizionario, allora prendo il valore della chiave e lavoro su di esso
+            up = passwords[cerca]
+            print(cerca)
+            scelta = input("User (u) o Password (p)? ").lower()
             if scelta == "u":
                 up[0] = input("Inserisci Username nuovo: ")
             elif scelta == "p":
@@ -70,7 +74,7 @@ class GestisciPassword:
             passwords.update({cerca: up})
         else:
             pulisci_schermo()
-            print(f"» {plat} non risulta nel database!")
+            print(f"» {cerca} non risulta nel database!")
         return passwords
 
     def carica_da_file_in_chiaro(self):
@@ -83,7 +87,7 @@ class GestisciPassword:
 
         passwords = {}
 
-        with open("./password_in_chiaro", 'rt') as fr:
+        with open("password_in_chiaro", 'rt') as fr:
             messaggio = fr.read()
 
         list_temp = messaggio.split('\n')  #Trasforma il messaggio preso dal file 'password' e lo trasforma in una lista
@@ -125,13 +129,18 @@ class GestisciPassword:
         return passwords
 
     def leggi(self, passwords):         #Stessa impostazione del metodo "modifica"
-        plat = input("Quale piattaforma? ")
-        cerca = plat.lower()
+        pulisci_schermo()
+        self.listaPiattaforme(passwords)
+        plat = input("Inserisci numero relativo alla piattaforma: ")
+
+        cerca = intToPlat(passwords.keys(), int(plat))
 
         if cerca in passwords:
             up = passwords[cerca]
             user = up[0]
             passwd = up[1]
+            pulisci_schermo()
+            print(cerca)
             print("L'username richiesto è: " + user)
             print("La password richiesta è: " + passwd)
 
@@ -144,7 +153,7 @@ class GestisciPassword:
                     copia(passwd)
         else:
             pulisci_schermo()
-            print(f"» {plat} non risulta nel database!")
+            print(f"» {cerca} non risulta nel database!")
     
     def aggiungi(self, passwords):                      
         plat = input("Quale piattaforma? ").lower()
@@ -163,16 +172,20 @@ class GestisciPassword:
         return passwords
 
     def elimina(self, passwords):
-        plat = input("Quale piattaforma? ")
-        cerca = plat.lower()
+        pulisci_schermo()
+        self.listaPiattaforme(passwords)
+        plat = input("Inserisci numero relativo alla piattaforma: ")
+
+        cerca = intToPlat(passwords.keys(), int(plat))
+
         if cerca in passwords:
             passwords.pop(cerca)
             pulisci_schermo()
-            print(f"» I dati di {plat} sono stati eliminati!")
+            print(f"» I dati di {cerca} sono stati eliminati!")
             return passwords
         else:
             pulisci_schermo()
-            print(f"» {plat} non risulta nel database!")
+            print(f"» {cerca} non risulta nel database!")
             return passwords
 
     def carica(self):
