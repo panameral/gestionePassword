@@ -29,9 +29,13 @@ def generaPassword():
                 p += choice(digits)
             elif l == 2:
                 p += choice("@#$!%*?&_")
+<<<<<<< HEAD
 
     copia(p)
     print("Password generata e copiata pronta per poterla incollare!")
+=======
+    
+>>>>>>> 6e50eab0ac786f02abe8786bb62747f74dcf2ace
     return p
         
 class GestisciPassword:
