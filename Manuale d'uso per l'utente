@@ -1,8 +1,9 @@
 Questo è un programma che gestisce le password il tutto in linea di comando.
 
-È necessario che il terminale si trovi nella stessa cartella di dove si trova il file delle password.
+Per configurare a modo il tutto basta avviare lo script "install.sh" e penserà a tutto lui.
 
-Basta aprirlo e come prima cosa chiederà una password (se l'avete già inserita inserite la vostra, altrimenti scegliete semplicemente una password).
+Una volta eseguito lo script "install.sh", basta avviare il comando su terminale "pypass" e come prima cosa chiederà una password (se l'avete già inserita 
+inserite la vostra, che servirà come chiave per decriptare il file delle password, se non avete un file criptato scegliete semplicemente una password).
 
 Se troverà un file criptato contenente le password, questo verrà caricato in memoria e vi verrà mostrato un menù con 8 opzioni, se scegliete l'opzione 
 lista piattaforme, vi sarà mostrata una lista delle piattaforme con i rispettivi indici, ma comunque questa lista vi sarà mostrata ugualmente se scegliete altre 
