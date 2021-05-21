@@ -7,7 +7,9 @@ import cryptography
 from Crittografia import Crittografia, genera_chiave_fernet
 from Funzioni import pulisci_schermo, esci_con_messaggio, regola, elementi_lista_non_unici, intToPlat
 
-
+#generaPassword() genera una password (alfanumerica o con aggiunta di alcuni simboli,
+#a seconda della scelta dell'utente) in modo casuale, per poi copiarla nella clipboard
+#pronta per poter essere incollata da parte dell'utente dove ritiene utile.
 def generaPassword():
     scelta = input("1. Password alfanumerica\n2. Password alfanumerica con simboli\nInserire scelta: ")
     numero = input("Inserire numero caratteri: ")
@@ -15,6 +17,7 @@ def generaPassword():
     p = ''
     if scelta == "1":             
         for i in range(int(numero)+1):
+
             l = choice(range(2))
             if l == 0:
                 p += choice(ascii_letters)
@@ -22,6 +25,7 @@ def generaPassword():
                 p += choice(digits)
     elif scelta == "2":      
         for i in range(int(numero)+1):
+            # sceglie in modo casuale se generare un carattere numerico o dell'alfabeto oppure un simbolo scelto tra qeusti "@#$!%*?&_"
             l = choice(range(3))
             if l == 0:
                 p += choice(ascii_letters)
@@ -29,6 +33,7 @@ def generaPassword():
                 p += choice(digits)
             elif l == 2:
                 p += choice("@#$!%*?&_")
+
     copia(p)
     print("Password generata e copiata pronta per poterla incollare!")
 
@@ -44,32 +49,37 @@ class GestisciPassword:
     def listaPiattaforme(self, passwords):
         print("Le piattaforme sono:")
         counter = 0
+        #stampa a video la lista di tutte le piattaforme memorizzate (chiavi del dizionario 'passwords')
+        #dando pure un contatore a ciascuna di esse in modo da poter selezionare facilmente.
         for platform in passwords.keys():           #Le piattaforme sono come nome delle chiavi del dizionario "passwords"
             counter += 1
             print(f"{counter} -> {platform}")
 
     def modifica(self, passwords):
+        #mostra le piattaforme con i corrispettivi indici che, una volta selezionato l'indice,
+        #verrà usato per prendere il nome della piattaforma interessata
         pulisci_schermo()
         self.listaPiattaforme(passwords)
         plat = input("Inserisci numero relativo alla piattaforma: ")
-
         cerca = intToPlat(passwords.keys(), int(plat))
 
         if cerca in passwords:
             up = passwords[cerca]
             print(cerca)
             scelta = input("User (u) o Password (p)? ").lower()
+
             if scelta == "u":
                 up[0] = input("Inserisci Username nuovo: ")
             elif scelta == "p":
                 auto_manuale = input("La password vuoi sia generata (g) o la vuoi inserire manualmente (m)?")
                 pulisci_schermo()
-                if auto_manuale == "g" or auto_manuale == "generata" or auto_manuale == "genera":
+                if auto_manuale == "g" or auto_manuale == "generata" or auto_manuale == "genera":   #nel caso l'utente inserisca 'genera' o 'generata' invece di 'g'
                     up[1] = generaPassword()
-                elif auto_manuale == "m" or auto_manuale == "manuale" or auto_manuale == "manualmente":
+                elif auto_manuale == "m" or auto_manuale == "manuale" or auto_manuale == "manualmente":     #nel caso l'utente inserisca 'manuale' o 'manualmente' invece di 'm'
                     up[1] = input("Inserisci la tua password: ")
                 pulisci_schermo()
             else:
+                #Se hai sbagliato basta riselezionare la modifica dal menù principale e poi scegliere correttamente
                 print("Riprendi la modifica ricordando che puoi scegliere solo User (u) o Password (p)")
             passwords.update({cerca: up})
         else:
@@ -77,6 +87,8 @@ class GestisciPassword:
             print(f"» {cerca} non risulta nel database!")
         return passwords
 
+    #la funzione sottostante serve all'utente per caricare in memoria
+    #una lista di password opportunamente formattata e non criptata
     def carica_da_file_in_chiaro(self):
         messaggio = ''
         list_temp = []
@@ -91,22 +103,32 @@ class GestisciPassword:
             messaggio = fr.read()
 
         list_temp = messaggio.split('\n')  #Trasforma il messaggio preso dal file 'password' e lo trasforma in una lista
+
         int_lista_size = (int(len(list_temp)/3))*3
+
+        #durante lo sviluppo si è presentato il problema della dimensione errata della
+        #lista "splittata" precedentemente (probabilmente a causa di una newline)
+        #e la seguente funzione sistema la cosa regolando la lista secondo la giusta dimensione
         list_temp = regola(list_temp, int_lista_size, len(list_temp))
 
-        for i in range(0, len(list_temp), 3):  # Fare tre liste ordinate in modo da avere piattaforma, user e password in 3 diverrse liste su cui lavorare dopo
+        # Fare tre liste ordinate in modo da avere piattaforma, user e password in 3 diverrse liste su cui lavorare dopo
+        for i in range(0, len(list_temp), 3):
             keys.append(list_temp[i].lower())
         for i in range(1, len(list_temp), 3):
             users.append(list_temp[i])
         for i in range(2, len(list_temp), 3):
             passess.append(list_temp[i])
 
+        #la seguente operazione serve a darmi una lista delle piattaforme con più di un utente
         pt = elementi_lista_non_unici(keys)
 
+        #Essendo che ogni piattaforma ha almeno un nome utente e una password
+        #è ovvio che le liste 'keys', 'users' e 'passess' devono essere della stessa dimensione
         if len(keys) != len(users) and len(keys) != len(passess):
             print(f"Lista Size: {len(list_temp)}\nPiattaforme: {len(keys)}\nUtenti: {len(users)}\nPassword: {len(passess)}")
             esci_con_messaggio("» C'è stato qualche problema con il caricamento!")
 
+        #Per l'inserimento delle piattaforme nel dizionario 'passwords', parto con quelle con più utenti e poi procedo con gli altri
         for i in pt:
             dp = 0
             for j in range(len(keys)):
@@ -144,6 +166,8 @@ class GestisciPassword:
             print("L'username richiesto è: " + user)
             print("La password richiesta è: " + passwd)
 
+            #Se all'utente serve copiare la password per incollarla poi dove
+            #ritiene opportuno, le seguenti operazioni rendono semplice ciò
             scegli = input("Vuoi copiare l'informazione per poterlo incollare poi? ")
             if scegli == "s" or scegli == "si":
                 cosa = input("Cosa vuoi copiare user (u) o password (p)? ")
@@ -160,22 +184,26 @@ class GestisciPassword:
         user = input("Inserisci Username nuovo: ")
         p = ''
         auto_manuale = input("La password vuoi sia generata (g) o la vuoi inserire manualmente (m)?")
+
         pulisci_schermo()
+        #si da la possibilità all'utente di inserire manualmente una password o di generarla in modo casuale
         if auto_manuale == "g" or auto_manuale == "generata" or auto_manuale == "genera":
             p = generaPassword()
         elif auto_manuale == "m" or auto_manuale == "manuale" or auto_manuale == "manualmente":
             p = input("Inserisci la tua password: ")
         pulisci_schermo()
-        list_temp = [user, p]                   #questa lista racchiude user e password che saranno impostati come valore del dizionario,
-        passwords.update({plat: list_temp})     #la cui chiave sarà la piattaforma legata ad essi
+
+        # questa lista racchiude user e password che saranno impostati come valore del dizionario, la cui chiave sarà la piattaforma legata ad essi
+        list_temp = [user, p]
+        passwords.update({plat: list_temp})
 
         return passwords
 
     def elimina(self, passwords):
         pulisci_schermo()
         self.listaPiattaforme(passwords)
-        plat = input("Inserisci numero relativo alla piattaforma: ")
 
+        plat = input("Inserisci numero relativo alla piattaforma: ")
         cerca = intToPlat(passwords.keys(), int(plat))
 
         if cerca in passwords:
@@ -189,13 +217,14 @@ class GestisciPassword:
             return passwords
 
     def carica(self):
-        if isfile(self.file_name):                 #Se il file delle password esiste, lo apre semplicemente e ritorna le password come lista
+        # Se il file delle password esiste, lo apre semplicemente e ritorna le password come lista, altrimenti crea la lista
+        if isfile(self.file_name):
             try:
-                return self.crypto.decritta()       #altrimenti crea la lista
-            except (cryptography.fernet.InvalidToken, TypeError):
+                return self.crypto.decritta()
+            except (cryptography.fernet.InvalidToken, TypeError):   #Nel caso di password errata
                 esci_con_messaggio("» Password errata!\n» Riavvia e riprova!");
         else:
-            #Generazione della lista delle password
+            #Generazione della lista delle password (o caricandola da un file in chiaro, o costruendola passo passo)
             passwords = {}
             chiaro = input("» Non c'è memorizzata nessuna password: vuoi caricare da un file in chiaro? ").lower()
 

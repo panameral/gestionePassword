@@ -18,6 +18,7 @@ def pulisci_schermo():
 def esci_con_messaggio(messaggio):
     exit(messaggio)
 
+#la seguente funzione serve a regolare in modo opportuno la lista, evitando errori
 def regola(lista, int_lista_size, lista_size):
     int_lista_opera = int_lista_size
     lista_temporanea = []
@@ -41,6 +42,7 @@ def regola(lista, int_lista_size, lista_size):
 
     return lista_temporanea
 
+#la seguente funzione mi restituisce una lista degli elementi ripetuti
 def elementi_lista_non_unici(lista):
     pt = []
 
@@ -50,6 +52,7 @@ def elementi_lista_non_unici(lista):
 
     return pt
 
+#la seguente funzione restituisce dall'indice precedentemente selezionato la piattaforma corrispondente
 def intToPlat(keys, index):
     counter = index
     counter_loop = 1

@@ -1,5 +1,4 @@
 import sys
-
 from GestisciPassword import GestisciPassword, generaPassword
 from Funzioni import esci_con_messaggio, menu, pulisci_schermo
 from getpass import getpass
