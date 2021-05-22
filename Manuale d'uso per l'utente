@@ -12,13 +12,15 @@ opzioni come modifica, leggi o rimuovi in modo che potete selezionare l'indice d
 Quando selezionate l'opzione della lettura, una volta selezionata la piattaforma vi verrà proposto di poter copiare l'username o la password,
 in modo che potete incollarla dove vi necessita.
 
-L'opzione carica file in chiaro, vi permette di caricare un file contenente le password (opportunamente preformattato) in modo da caricarlo in memoria, operare e 
-crittografare il tutto in un file criptato. Il file in chiaro dovrà essere impostato in questo modo:
+L'opzione carica file in chiaro, vi permette di caricare un file contenente le password (opportunamente preformattato) in modo da caricarlo in memoria, 
+operare e crittografare il tutto in un file criptato. Il file in chiaro dovrà essere impostato in questo modo:
 il nome della piattaforma (preferibilmente senza spazi), 
 a capo il nome utente,
 a capo la password,
 a capo il nome della nuova piattaforma e così via. 
 Attenzione a non lasciare spazi vuoti ne all'inizio ne alla fine (altrimenti non verrà caricato correttamente). 
-Inoltre il nome del file in chiarò dovrà avere nome "password_in_chiaro" senza estensione e il file verrà caricato in memoria.
+Inoltre il nome del file in chiarò dovrà avere nome "password_in_chiaro" senza estensione ed essere inserita nella cartella dove
+si è salvato il programma (lo script install.sh salverà la cartella in "~/.gestionePassword/", in tal caso il file in chiaro 
+dovrà essere inserito in quella cartella, insomma nella stessa cartella dov'è contenuto 'Main.py') e il file verrà caricato in memoria.
 
 All'avvio se il programma non troverà il file criptato vi chiederà di caricare il file in chiaro oppure di scrivere la prima password con i dati.
