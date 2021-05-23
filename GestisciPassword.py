@@ -60,8 +60,14 @@ class GestisciPassword:
         #verrà usato per prendere il nome della piattaforma interessata
         pulisci_schermo()
         self.listaPiattaforme(passwords)
-        plat = input("Inserisci numero relativo alla piattaforma: ")
-        cerca = intToPlat(passwords.keys(), int(plat))
+
+        plat = ''
+        try:
+            plat = input("Inserisci numero relativo alla piattaforma: ")
+            cerca = intToPlat(passwords.keys(), int(plat))
+        except ValueError:
+            plat = input("Per favore inserisci un numero che sia tra quelli mostrati relativi alle piattaforme: ")
+            cerca = intToPlat(passwords.keys(), int(plat))
 
         if cerca in passwords:
             up = passwords[cerca]
@@ -71,7 +77,7 @@ class GestisciPassword:
             if scelta == "u":
                 up[0] = input("Inserisci Username nuovo: ")
             elif scelta == "p":
-                auto_manuale = input("La password vuoi sia generata (g) o la vuoi inserire manualmente (m)?")
+                auto_manuale = input("La password vuoi sia generata (g) o la vuoi inserire manualmente (m)?").lower()
                 pulisci_schermo()
                 if auto_manuale == "g" or auto_manuale == "generata" or auto_manuale == "genera":   #nel caso l'utente inserisca 'genera' o 'generata' invece di 'g'
                     up[1] = generaPassword()
@@ -84,7 +90,11 @@ class GestisciPassword:
             passwords.update({cerca: up})
         else:
             pulisci_schermo()
-            print(f"» {cerca} non risulta nel database!")
+            if cerca == '':
+                print(f"» {plat} non risulta nel database!")
+            else:
+                print(f"» {cerca} non risulta nel database!")
+
         return passwords
 
     #la funzione sottostante serve all'utente per caricare in memoria
@@ -99,63 +109,67 @@ class GestisciPassword:
 
         passwords = {}
 
-        with open("password_in_chiaro", 'rt') as fr:
-            messaggio = fr.read()
+        try:
+            with open("password_in_chiaro", 'rt') as fr:
+                messaggio = fr.read()
 
-        list_temp = messaggio.split('\n')  #Trasforma il messaggio preso dal file 'password' e lo trasforma in una lista
+            list_temp = messaggio.split('\n')  #Trasforma il messaggio preso dal file 'password' e lo trasforma in una lista
 
-        int_lista_size = (int(len(list_temp)/3))*3
+            int_lista_size = (int(len(list_temp)/3))*3
 
-        #durante lo sviluppo si è presentato il problema della dimensione errata della
-        #lista "splittata" precedentemente (probabilmente a causa di una newline)
-        #e la seguente funzione sistema la cosa regolando la lista secondo la giusta dimensione
-        list_temp = regola(list_temp, int_lista_size, len(list_temp))
+            #durante lo sviluppo si è presentato il problema della dimensione errata della
+            #lista "splittata" precedentemente (probabilmente a causa di una newline)
+            #e la seguente funzione sistema la cosa regolando la lista secondo la giusta dimensione
+            list_temp = regola(list_temp, int_lista_size, len(list_temp))
 
-        # Fare tre liste ordinate in modo da avere piattaforma, user e password in 3 diverrse liste su cui lavorare dopo
-        for i in range(0, len(list_temp), 3):
-            keys.append(list_temp[i].lower())
-        for i in range(1, len(list_temp), 3):
-            users.append(list_temp[i])
-        for i in range(2, len(list_temp), 3):
-            passess.append(list_temp[i])
+            # Fare tre liste ordinate in modo da avere piattaforma, user e password in 3 diverrse liste su cui lavorare dopo
+            for i in range(0, len(list_temp), 3):
+                keys.append(list_temp[i])
+            for i in range(1, len(list_temp), 3):
+                users.append(list_temp[i])
+            for i in range(2, len(list_temp), 3):
+                passess.append(list_temp[i])
 
-        #la seguente operazione serve a darmi una lista delle piattaforme con più di un utente
-        pt = elementi_lista_non_unici(keys)
+            #la seguente operazione serve a darmi una lista delle piattaforme con più di un utente
+            pt = elementi_lista_non_unici(keys)
 
-        #Essendo che ogni piattaforma ha almeno un nome utente e una password
-        #è ovvio che le liste 'keys', 'users' e 'passess' devono essere della stessa dimensione
-        if len(keys) != len(users) and len(keys) != len(passess):
-            print(f"Lista Size: {len(list_temp)}\nPiattaforme: {len(keys)}\nUtenti: {len(users)}\nPassword: {len(passess)}")
-            esci_con_messaggio("» C'è stato qualche problema con il caricamento!")
+            #Essendo che ogni piattaforma ha almeno un nome utente e una password
+            #è ovvio che le liste 'keys', 'users' e 'passess' devono essere della stessa dimensione
+            if len(keys) != len(users) and len(keys) != len(passess):
+                print(f"Lista Size: {len(list_temp)}\nPiattaforme: {len(keys)}\nUtenti: {len(users)}\nPassword: {len(passess)}")
+                esci_con_messaggio("» C'è stato qualche problema con il caricamento!")
 
-        #Per l'inserimento delle piattaforme nel dizionario 'passwords', parto con quelle con più utenti e poi procedo con gli altri
-        for i in pt:
-            dp = 0
-            for j in range(len(keys)):
-                if i == keys[j]:
-                    dp += 1
-                    nome_utente = users[j]
-                    passwd = passess[j]
-                    piattaforma = keys[j] + str(dp)
+            # Se per una piattaforma ci sono più account, io me li segno aggiungendo
+            # alla stringa della piattaforma "multipla" il nome utente
+            for i in range(len(keys)):
+                if keys[i] in pt:
+                    piattaforma = keys[i] + " (" + users[i] + ")"
+                    nome_utente = users[i]
+                    passwd = passess[i]
+                    passwords.update({piattaforma: [nome_utente, passwd]})
+                else:
+                    piattaforma = keys[i]
+                    nome_utente = users[i]
+                    passwd = passess[i]
                     passwords.update({piattaforma: [nome_utente, passwd]})
 
-        for i in range(len(keys)):
-            if keys[i] in pt:
-                continue
-            else:
-                piattaforma = keys[i]
-                nome_utente = users[i]
-                passwd = passess[i]
-                passwords.update({piattaforma: [nome_utente, passwd]})
+            return passwords
+        except FileNotFoundError:
+            print("File in chiaro non trovato!")
+            print("Deve essere inserito nella stessa cartella del file Main.py con il nome \"password_in_chiaro\"!")
 
-        return passwords
 
     def leggi(self, passwords):         #Stessa impostazione del metodo "modifica"
         pulisci_schermo()
         self.listaPiattaforme(passwords)
-        plat = input("Inserisci numero relativo alla piattaforma: ")
 
-        cerca = intToPlat(passwords.keys(), int(plat))
+        plat = ''
+        try:
+            plat = input("Inserisci numero relativo alla piattaforma: ")
+            cerca = intToPlat(passwords.keys(), int(plat))
+        except ValueError:
+            plat = input("Per favore inserisci un numero che sia tra quelli mostrati relativi alle piattaforme: ")
+            cerca = intToPlat(passwords.keys(), int(plat))
 
         if cerca in passwords:
             up = passwords[cerca]
@@ -168,22 +182,23 @@ class GestisciPassword:
 
             #Se all'utente serve copiare la password per incollarla poi dove
             #ritiene opportuno, le seguenti operazioni rendono semplice ciò
-            scegli = input("Vuoi copiare l'informazione per poterlo incollare poi? ")
-            if scegli == "s" or scegli == "si":
-                cosa = input("Cosa vuoi copiare user (u) o password (p)? ")
-                if cosa == "u" or cosa == "user":
-                    copia(user)
-                elif cosa == "p" or cosa == "password":
-                    copia(passwd)
+            scegli = input("Copia user (u), password (p)?\nSe non vuoi copiare inserisci qualunque carattere e premi Invio: ").lower()
+            if scegli == "u" or scegli == "user":
+                copia(user)
+            elif scegli == "p" or scegli == "password":
+                copia(passwd)
         else:
             pulisci_schermo()
-            print(f"» {cerca} non risulta nel database!")
+            if cerca == '':
+                print(f"» {plat} non risulta nel database!")
+            else:
+                print(f"» {cerca} non risulta nel database!")
     
     def aggiungi(self, passwords):                      
-        plat = input("Quale piattaforma? ").lower()
+        plat = input("Quale piattaforma? ")
         user = input("Inserisci Username nuovo: ")
         p = ''
-        auto_manuale = input("La password vuoi sia generata (g) o la vuoi inserire manualmente (m)?")
+        auto_manuale = input("La password vuoi sia generata (g) o la vuoi inserire manualmente (m)?").lower()
 
         pulisci_schermo()
         #si da la possibilità all'utente di inserire manualmente una password o di generarla in modo casuale
@@ -203,8 +218,13 @@ class GestisciPassword:
         pulisci_schermo()
         self.listaPiattaforme(passwords)
 
-        plat = input("Inserisci numero relativo alla piattaforma: ")
-        cerca = intToPlat(passwords.keys(), int(plat))
+        plat = ''
+        try:
+            plat = input("Inserisci numero relativo alla piattaforma: ")
+            cerca = intToPlat(passwords.keys(), int(plat))
+        except ValueError:
+            plat = input("Per favore inserisci un numero che sia tra quelli mostrati relativi alle piattaforme: ")
+            cerca = intToPlat(passwords.keys(), int(plat))
 
         if cerca in passwords:
             passwords.pop(cerca)
@@ -213,7 +233,10 @@ class GestisciPassword:
             return passwords
         else:
             pulisci_schermo()
-            print(f"» {cerca} non risulta nel database!")
+            if cerca == '':
+                print(f"» {plat} non risulta nel database!")
+            else:
+                print(f"» {cerca} non risulta nel database!")
             return passwords
 
     def carica(self):
@@ -232,7 +255,7 @@ class GestisciPassword:
                 pulisci_schermo()
                 return self.carica_da_file_in_chiaro()
             else:
-                plat = input("» Memorizza una password!\nPer quale piattaforma? ").lower()
+                plat = input("» Memorizza una password!\nPer quale piattaforma? ")
                 user = input("Inserisci Username nuovo: ")
 
                 pulisci_schermo()

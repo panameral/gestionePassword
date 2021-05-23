@@ -74,7 +74,7 @@ class Crittografia:
 
         # Fare tre liste ordinate in modo da avere piattaforma, user e password in 3 diverrse liste su cui lavorare dopo
         for i in range(0, len(list_temp), 3):
-            keys.append(list_temp[i].lower())
+            keys.append(list_temp[i])
         for i in range(1, len(list_temp), 3):
             users.append(list_temp[i])
         for i in range(2, len(list_temp), 3):
@@ -89,20 +89,14 @@ class Crittografia:
         #la seguente operazione serve a darmi una lista delle piattaforme con più di un utente
         pt = elementi_lista_non_unici(list_temp)
 
-        #Per l'inserimento delle piattaforme nel dizionario 'passwords', parto con quelle con più utenti e poi procedo con gli altri
-        for i in pt:
-            dp = 0
-            for j in range(len(keys)):
-                if i == keys[j]:
-                    ++dp
-                    piattaforma = keys[j]+str(dp)
-                    nome_utente = users[j]
-                    passwd = passess[j]
-                    passwords.update({piattaforma: [nome_utente, passwd]})
-
+        #Se per una piattaforma ci sono più account, io me li segno aggiungendo
+        #alla stringa della piattaforma "multipla" il nome utente
         for i in range(len(keys)):
             if keys[i] in pt:
-                continue
+                piattaforma = keys[i] + " (" + users[i] + ")"
+                nome_utente = users[i]
+                passwd = passess[i]
+                passwords.update({piattaforma: [nome_utente, passwd]})
             else:
                 piattaforma = keys[i]
                 nome_utente = users[i]
