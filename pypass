@@ -1,0 +1,4 @@
+current_folder=$(pwd) 
+cd ~ 
+python ~/.gestionePassword/Main.py 
+cd $pwd

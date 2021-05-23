@@ -1,0 +1,26 @@
+Questo è un programma che gestisce le password il tutto in linea di comando.
+
+Per configurare a modo il tutto basta avviare lo script "install.sh" e penserà a tutto lui.
+
+Una volta eseguito lo script "install.sh", basta avviare il comando su terminale "pypass" e come prima cosa chiederà una password (se l'avete già inserita 
+inserite la vostra, che servirà come chiave per decriptare il file delle password, se non avete un file criptato scegliete semplicemente una password).
+
+Se troverà un file criptato contenente le password, questo verrà caricato in memoria e vi verrà mostrato un menù con 8 opzioni, se scegliete l'opzione 
+lista piattaforme, vi sarà mostrata una lista delle piattaforme con i rispettivi indici, ma comunque questa lista vi sarà mostrata ugualmente se scegliete altre 
+opzioni come modifica, leggi o rimuovi in modo che potete selezionare l'indice della piattaforma che vi interessa.
+
+Quando selezionate l'opzione della lettura, una volta selezionata la piattaforma vi verrà proposto di poter copiare l'username o la password,
+in modo che potete incollarla dove vi necessita.
+
+L'opzione carica file in chiaro, vi permette di caricare un file contenente le password (opportunamente preformattato) in modo da caricarlo in memoria, 
+operare e crittografare il tutto in un file criptato. Il file in chiaro dovrà essere impostato in questo modo:
+il nome della piattaforma (preferibilmente senza spazi), 
+a capo il nome utente,
+a capo la password,
+a capo il nome della nuova piattaforma e così via. 
+Attenzione a non lasciare spazi vuoti ne all'inizio ne alla fine (altrimenti non verrà caricato correttamente). 
+Inoltre il nome del file in chiarò dovrà avere nome "password_in_chiaro" senza estensione ed essere inserita nella cartella dove
+si è salvato il programma (lo script install.sh salverà la cartella in "~/.gestionePassword/", in tal caso il file in chiaro 
+dovrà essere inserito in quella cartella, insomma nella stessa cartella dov'è contenuto 'Main.py') e il file verrà caricato in memoria.
+
+All'avvio se il programma non troverà il file criptato vi chiederà di caricare il file in chiaro oppure di scrivere la prima password con i dati.

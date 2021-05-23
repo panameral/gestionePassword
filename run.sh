@@ -1,1 +1,0 @@
-python ~/.gestionePassword/Main.py
